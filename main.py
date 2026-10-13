@@ -37,8 +37,16 @@ def weatherapi_all(station):
     filename = f'data_small/TG_STAID{str(station).zfill(6)}.txt'
     df = pd.read_csv(filename, skiprows=20, parse_dates=['    DATE'])
 
-    return df.to_dict()
+    return df.to_dict('records')
 
+
+
+@app.route("/api/v1/annual/<station>/<year>")
+def weatherapi_year(station, year):
+    filename = f'data_small/TG_STAID{str(station).zfill(6)}.txt'
+    df = pd.read_csv(filename, skiprows=20)
+    df['    DATE'] = df['    DATE'].astype(str)
+    return df[df['    DATE'].str.startswith(str(year))].to_dict('records')
 
 
 app.run(debug=True)
